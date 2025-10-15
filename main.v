@@ -1,14 +1,14 @@
 module main
 
 import term
+import os
 
 // TODO:
-// 	- Strip punctuation from words.
-// 	- Skip word if banned punctuation in it e.g. HTML chars
-// 	- Method to regenerate search and swap pointers when articles is changed.
-// 	  i.e. hotswap. Searches should be much more common than article changes
-// 	  so putting the expensive algorithm in the article change rather than search
-//    makes sense (I hope).
+//  - Sort and pretty print results
+// 	- (for v_blogger) Method to regenerate search and swap pointers when articles 
+// 	  is changed. i.e. hotswap. Searches should be much more common than article 
+// 	  changes so putting the expensive algorithm in the article change rather than 
+//    search makes sense (I hope).
 
 struct Article {
 	id int
@@ -58,6 +58,26 @@ fn create_tree (keywords []Keyword) Node {
 	return root
 }
 
+fn (root Node) find (findstr string, index int) []Keyword {
+	
+	mut keywords := []Keyword{}
+
+	if index > findstr.len - 1 {
+		keywords << root.keywords
+		for _, branch in root.branches {
+			keywords << branch.find(findstr, index + 1)
+		}
+		return keywords
+	}
+	else {
+		if root.key == findstr {
+			keywords << root.keywords
+		}
+		keywords << root.branches[findstr[index].ascii_str()].find(findstr, index+1)
+		return keywords
+	}
+}
+
 fn (article Article) kws (mut keywords map[string]Keyword) ! {
 	words := article.content.split(' ').map(it.to_lower())
 	if words.len < 1 {
@@ -69,9 +89,7 @@ fn (article Article) kws (mut keywords map[string]Keyword) ! {
 				it.ascii_str()
 			).filter(
 				it !in banned_chars
-			).map(
-				it.bytes()[0]
-			).bytestr()
+			).join('')
 		if word.len == 0 {
 			// All characters were banned characters
 			continue
@@ -117,7 +135,7 @@ fn main() {
 	keywords_arr.sort(a.hits > b.hits)
 	
 	for i in 0..10 {
-		println('${i+1}: ${keywords_arr[i].word} = ${keywords_arr[i].hits}')
+	 	println('${i+1}: ${keywords_arr[i].word} = ${keywords_arr[i].hits}')
 	}
 
 	println('Total keywords = ${keywords_arr.len}')
@@ -125,6 +143,16 @@ fn main() {
 	println('')
 	println('Creating tree ')
 	tree := create_tree(keywords_arr)
-	println(tree)
-
+	println('')
+	for {
+		print('Search: ')
+		value := os.get_line()
+		if value.len == 0 {
+			println('Search term required')
+		}
+		else {
+			println(tree.find(value, 0))
+		}
+		println('')
+	}
 }
