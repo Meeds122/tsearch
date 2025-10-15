@@ -33,15 +33,16 @@ mut:
 
 // recursive tree algorithm, depth first fill
 fn create_branch (keyword Keyword, index int, mut node Node) {
-	if keyword.word[index].ascii_str() !in node.branches{
-		node.branches[keyword.word[index].ascii_str()] = Node { key: keyword.word[index].ascii_str() }
+	c := keyword.word[index].ascii_str() // calculate once, use everywhere.
+	if c !in node.branches{
+		node.branches[c] = Node { key: c }
 	}
 	if keyword.word.len - 1 == index {
-		node.branches[keyword.word[index].ascii_str()].keywords << keyword
+		node.branches[c].keywords << keyword
 		return
 	}
 	else {
-		create_branch(keyword, index + 1, mut node.branches[keyword.word[index].ascii_str()])
+		create_branch(keyword, index + 1, mut node.branches[c])
 	}
 	return
 }
