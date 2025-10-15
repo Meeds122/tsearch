@@ -1,0 +1,36 @@
+module main
+
+// Words that can not be used in the construction of nodes or as datas
+const banned_words := [
+	'to',
+	'a',
+	'like',
+	'with',
+	'and',
+	'for',
+	'of',
+	'but',
+	'from',
+	'in',
+	'the',
+	'are',
+	'the',
+	'into',
+	'as',
+	'without',
+	'that'
+	'at',
+	'on',
+	'is',
+	'now',
+	'could',
+	'be',
+	'or',
+	'by',
+	'have',
+	'an',
+	'while',
+	'must',
+	'use',
+]
+
