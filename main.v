@@ -63,10 +63,22 @@ fn (article Article) kws (mut keywords map[string]Keyword) ! {
 	if words.len < 1 {
 		return error('Insufficient content in article')
 	}
-	for word in words {
-		if word in banned_words {
+	for raw_word in words {
+		// Start cleanup input
+		mut word := raw_word.bytes().map(
+				it.ascii_str()
+			).filter(
+				it !in banned_chars
+			).map(
+				it.bytes()[0]
+			).bytestr()
+		if word.len == 0 {
+			// All characters were banned characters
 			continue
 		}
+		else if word in banned_words {
+			continue
+		} // End input cleanup
 		else if word in keywords {
 			keywords[word].hits += 1 
 			if article.id in keywords[word].found_in {
@@ -110,8 +122,9 @@ fn main() {
 
 	println('Total keywords = ${keywords_arr.len}')
 
+	println('')
+	println('Creating tree ')
 	tree := create_tree(keywords_arr)
-
 	println(tree)
 
 }
