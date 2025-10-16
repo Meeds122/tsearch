@@ -89,7 +89,7 @@ def main():
     for title in cyber_titles:
         text = get_article_text(title)
         filename = sanitize_filename(title)
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open('data' + filename, 'w', encoding='utf-8') as f:
             f.write(f"=== {title} ===\n\n")
             f.write(text + "\n")
         created_files.append(filename)
