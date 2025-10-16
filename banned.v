@@ -67,5 +67,6 @@ const banned_chars := [
 	r"'",
 	r',',
 	r'.',
-	r'/'
+	r'/',
+	'\n'
 ]

@@ -1,7 +1,9 @@
 module main
 
-import term
+// import term
 import os
+
+import time
 
 // TODO:
 //  - Sort and pretty print results
@@ -117,14 +119,14 @@ fn (article Article) kws (mut keywords map[string]Keyword) ! {
 }
 
 fn main() {
-	x, _ := term.get_terminal_size()
+	// x, _ := term.get_terminal_size()
 
 	println('Loaded Articles:')
 	articles := make_articles()
 	mut keywords := map[string]Keyword{}
 	
 	for article in articles {
-		println('${article.id}: ${article.content[0..x-6]}...')
+		// println('${article.id}: ${article.content[0..x-6]}...')
 		article.kws(mut keywords) or { panic(err) }
 	}
 	
@@ -141,8 +143,11 @@ fn main() {
 	println('Total keywords = ${keywords_arr.len}')
 
 	println('')
-	println('Creating tree ')
+	println('Creating tree')
+	create_start := time.now()
 	tree := create_tree(keywords_arr)
+	create_end := time.now()
+	println('Tree created in ${create_end - create_start}')
 	println('')
 	for {
 		print('Search: ')
@@ -151,7 +156,22 @@ fn main() {
 			println('Search term required')
 		}
 		else {
-			println(tree.find(value, 0))
+			search_start := time.now()
+			mut ret := tree.find(value, 0)
+			ret.sort(a.hits > b.hits)
+			search_end := time.now()
+			if ret.len <= 10 {
+				for i in 0..ret.len {
+					println('${i+1}: ${ret[i].word}')
+				}
+			}
+			else {
+				println('Top 10 results')
+				for i in 0..10 {
+					println('${i+1}: ${ret[i].word}')
+				}
+			}
+			println('Total results: ${ret.len} in ${search_end - search_start}')
 		}
 		println('')
 	}

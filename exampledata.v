@@ -1,6 +1,21 @@
 module main
 
-fn make_articles () []Article{
+import os
+
+fn make_articles () []Article {
+	mut articles := []Article{cap: 200}
+	mut i := 1
+	for fname in os.ls('data/') or { panic(err) }{
+		articles << Article{
+			id: i
+			content: os.read_file('data/${fname}') or { panic(err) }
+		}
+		i += 1
+	}
+	return articles
+}
+
+fn make_articles2 () []Article{
 	mut a := []Article{}
 	a << Article{
 		id: 1

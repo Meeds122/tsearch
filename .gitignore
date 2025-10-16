@@ -26,3 +26,4 @@ bin/
 # customs
 .editorconfig
 .gitattributes
+data/*.txt
